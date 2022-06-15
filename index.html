@@ -1,0 +1,232 @@
+<h1>Hunt Showdown Artillery Calculator</h1>
+<p> A utility for landing long distance explosive crossbow shots</p>
+<p> CTRL + Click to set your location, and then click to designate a target </p>
+
+ <button onclick="m1()" type="button">Stillwater Bayou</button> 
+  <button onclick="m2()" type="button">Lawson Delta</button> 
+   <button onclick="m3()" type="button">DeSalle</button> 
+<p id="bearing"> <span>Bearing: </span> </p>
+<p id="angle"> <span>Angle: </span></p>
+<canvas id="Canvas" width="1000" height="1000"></canvas>
+
+<script>
+var canvas = document.getElementById('Canvas');
+var context = canvas.getContext("2d");
+var map = (3)
+
+// Map sprite
+var mapSprite3 = new Image();
+var mapSprite2 = new Image();
+var mapSprite1 = new Image();
+
+mapSprite3.src = "https://preview.redd.it/xshjp5p9ega71.png?auto=webp&s=82c25a91868db05b25c0a67f351da9e3ca13e08b";
+
+mapSprite2.src = "https://i.ibb.co/zfjN6p6/lawson.png";
+
+mapSprite1.src = "https://i.ibb.co/3dRrbxP/bayou.png";
+
+
+var Marker = function () {
+    this.Sprite = new Image();
+    this.Sprite.src = "http://www.clker.com/cliparts/N/8/Y/g/D/P/marker.svg.med.png"
+    this.Width = 12;
+    this.Height = 20;
+    this.XPos = 0;
+    this.YPos = 0;
+}
+var Marker2 = function () {
+    this.Sprite = new Image();
+    this.Sprite.src = "http://www.clker.com/cliparts/N/8/Y/g/D/P/marker.svg.med.png"
+    this.Width = 12;
+    this.Height = 20;
+    this.XPos = 0;
+    this.YPos = 0;
+}
+
+var Markers = new Array();
+var Markers2 = new Array();
+
+
+var mouseClicked = function (mouse) {
+	if (window.event.ctrlKey) {
+    // Get corrent mouse coords
+    var rect = canvas.getBoundingClientRect();
+    var mouseXPos = (mouse.x - rect.left);
+    var mouseYPos = (mouse.y - rect.top);
+
+    console.log("Marker2 added");
+		Markers2 = []
+    // Move the marker when placed to a better location
+    var marker2 = new Marker2();
+    marker2.XPos = mouseXPos - (marker2.Width / 2);
+    marker2.YPos = mouseYPos - marker2.Height;
+
+    Markers2.push(marker2);
+    console.log(JSON.stringify(Markers2));
+}else {
+var rect = canvas.getBoundingClientRect();
+    var mouseXPos = (mouse.x - rect.left);
+    var mouseYPos = (mouse.y - rect.top);
+
+    console.log("Marker added");
+		Markers = []
+    // Move the marker when placed to a better location
+    var marker = new Marker();
+    marker.XPos = mouseXPos - (marker.Width / 2);
+    marker.YPos = mouseYPos - marker.Height;
+
+    Markers.push(marker);}}
+
+
+
+
+// Add mouse click event listener to canvas
+canvas.addEventListener("mousedown", mouseClicked, false);
+
+var firstLoad = function () {
+    context.font = "15px Georgia";
+    context.textAlign = "center";
+}
+
+firstLoad();
+
+var main = function () {
+    draw();
+};
+
+var m1 = function () {
+map = 1
+}
+
+var m2 = function () {
+map = 2
+}
+
+var m3 = function () {
+map = 3
+}
+
+var draw = function () {
+    // Clear Canvas
+    context.fillStyle = "#000";
+    context.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Draw map
+    // Sprite, X location, Y location, Image width, Image height
+    // You can leave the image height and width off, if you do it will draw the image at default size
+    if (map == 3) {
+    context.drawImage(mapSprite3, 0, 0, 1000, 1000);
+}
+  if (map == 2) {
+    context.drawImage(mapSprite2, 0, 0, 1000, 1000);
+}
+  if (map == 1) {
+    context.drawImage(mapSprite1, 0, 0, 1000, 1000);
+}
+    // Draw markers
+    for (var i = 0; i < Markers.length; i++) {
+        var tempMarker = Markers[i];
+        // Draw marker
+        context.drawImage(tempMarker.Sprite, tempMarker.XPos, tempMarker.YPos, tempMarker.Width, tempMarker.Height);
+        
+   
+
+        // Calculate postion text
+        var markerText = "Fire Target ";
+
+        // Draw a simple box so you can see the position
+        var textMeasurements = context.measureText(markerText);
+        context.fillStyle = "#666";
+        context.globalAlpha = 0.7;
+        context.fillRect(tempMarker.XPos - (textMeasurements.width / 2), tempMarker.YPos - 15, textMeasurements.width, 20);
+        context.globalAlpha = 1;
+
+        // Draw position above
+        context.fillStyle = "#000";
+        context.fillText(markerText, tempMarker.XPos, tempMarker.YPos);
+    }
+    
+    for (var i = 0; i < Markers2.length; i++) {
+        var tempMarker2 = Markers2[i];
+        // Draw marker
+        context.drawImage(tempMarker2.Sprite, tempMarker2.XPos, tempMarker2.YPos, tempMarker2.Width, tempMarker2.Height);
+        
+   
+
+        // Calculate postion text
+        var marker2Text = "Artillery Position ";
+
+        // Draw a simple box so you can see the position
+        var textMeasurements2 = context.measureText(marker2Text);
+        context.fillStyle = "#666";
+        context.globalAlpha = 0.7;
+        context.fillRect(tempMarker2.XPos - (textMeasurements2.width / 2), tempMarker2.YPos - 15, textMeasurements2.width, 20);
+        context.globalAlpha = 1;
+
+        // Draw position above
+        context.fillStyle = "#000";
+        context.fillText(marker2Text, tempMarker2.XPos, tempMarker2.YPos);
+    }//distance
+    
+    
+    	var distance = Math.sqrt(((tempMarker.XPos - tempMarker2.XPos) ** 2) + ((tempMarker.YPos - tempMarker2.YPos) ** 2));
+ // document.getElementById("distance").innerHTML = "Distance: " + distance;
+  
+ //bearing
+ var bearing = 57.295779513082 * (Math.atan(( (tempMarker.YPos - tempMarker2.YPos) / (tempMarker.XPos - tempMarker2.XPos))));
+if (tempMarker.YPos > tempMarker2.YPos && tempMarker.XPos < tempMarker2.XPos) {
+var bearing2 = (180 - (bearing * -1)) + 90 ;
+console.log("fucknuggets1");
+}
+
+if (tempMarker.YPos > tempMarker2.YPos && tempMarker.XPos > tempMarker2.XPos) {
+var bearing2 = bearing + 90;
+console.log("fucknuggets2");
+}
+
+if (tempMarker.YPos < tempMarker2.YPos && tempMarker.XPos < tempMarker2.XPos) {
+var bearing2 = (180 + (bearing * 1)) + 90 ;
+console.log("fucknuggets3");
+}
+if (tempMarker.YPos < tempMarker2.YPos && tempMarker.XPos > tempMarker2.XPos) {
+var bearing2 = (360 - (bearing * -1)) - 270 ;
+console.log("fucknuggets4");
+}
+
+
+
+document.getElementById("bearing").innerHTML = "Bearing: " + (bearing2);
+
+//angle
+var angle = ((Math.asin(0.002722222222 * distance)) / 2);
+
+document.getElementById("angle").innerHTML = "Angle: " + (angle * 57.2957795);
+
+
+
+};
+
+
+setInterval(main, (1000 / 5)); // Refresh 5 times a second
+</script>
+<style>
+body {
+  background: linear-gradient(143deg, #000 0%, #191919 100%);
+  color: #FFFFFF;
+  font-family: Helvetica, sans-serif;
+}
+button {
+  background-color: #f44336; /* Green */
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+}
+;p span { 
+    background-color: white; 
+}
+
+</style>
